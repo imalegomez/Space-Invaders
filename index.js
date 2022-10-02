@@ -59,11 +59,11 @@ function preload(){
 }
 
 
-var score = 0
-var lives = 3
+let score = 0
+let lives = 3
 var isStarted = false
-var barriers = []
-var ufoCount = 0
+let barriers = []
+let ufoCount = 0
 
 function create(){
     scene = this
@@ -136,21 +136,22 @@ function initEnemies(){
         for(r = 0; r < enemyInfo.count.row; r++){
             var enemyX = (c * (enemyInfo.width + enemyInfo.padding ))+ enemyInfo.offset.left
             var enemyY = (r * (enemyInfo.height + enemyInfo.padding ))+ enemyInfo.offset.top
-            enimies.create(enemyX, enemyY, "alien").setOrigin(0.5)
+            enimies.create(enemyX, enemyY, "alien").setOrigin(2)
         }
     }
 }
 
 //enemy moves every 1 second
-setInterval(moveEnemies, 1000)
 
-var xTimes = 0
-var yTimes = 0
+setInterval(moveEnemies, 1000)
+let xTimes = 0
+let yTimes = 0
 var dir= "right"
 function moveEnemies(){
     if(isStarted=== true){
         move.play()
-        if(xTimes == 20){
+        if(xTimes == 35)
+        {
             if(dir == "right"){
                 dir = "left"
                 xTimes = 0
@@ -169,6 +170,11 @@ function moveEnemies(){
         }else{
             enimies.children.each(function(enemy){
                 enemy.x = enemy.x - 10
+                enemy.y = enemy.y + 1
+                yTimes++
+                if(yTimes == 14500){
+                    end("lose")
+                }
                 enemy.body.reset(enemy.x, enemy.y)
             }, this)
             xTimes++
@@ -186,6 +192,7 @@ function manageBullet(bullet){
                 clearInterval(i)
                 isShooting = false
                 enemy.destroy()
+
                 score++
                 scoreText.setText("Score: " + score)
 
@@ -204,6 +211,7 @@ function manageBullet(bullet){
                 isShooting = false;
                 scoreText.setText("Score: " + score)
                 explosionSound.play()
+
                 if((score - ufoCount) === (enemyInfo.count.col * enemyInfo.count.row)){
                     end("win")
                 }
@@ -240,7 +248,7 @@ function manageBullet(bullet){
     })
 }
 
-var enemyBulletVelo = 200;
+let enemyBulletVelo = 200;
 function manageEnemyBullet(bullet, enemy){
     var angle = Phaser.Math.Angle.BetweenPoints(enemy, shooter);
     scene.physics.velocityFromRotation(angle, enemyBulletVelo, bullet.body.velocity)
